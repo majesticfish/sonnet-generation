@@ -54,7 +54,7 @@ def process_shakespeare():
                     regex = re.compile('[^a-zA-Z]')
                     word = regex.sub('', word.lower())
                     if word in wordlookup:
-                        X.append(wordlookup[word])
+                        x.append(wordlookup[word])
             i = i + 1
         X.append(x)
     return X

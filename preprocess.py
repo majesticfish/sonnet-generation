@@ -1,6 +1,7 @@
 import re
 
 def get_token_dict():
+    print("getting token")
     f = open("data/Syllable_dictionary.txt", 'r')
     lines = f.readlines()
     wordlist = []
@@ -16,6 +17,7 @@ def get_token_dict():
 
 def process_shakespeare():
     wordlist, syllable_count, wordlookup = get_token_dict()
+    print('processing')
     f = open("data/shakespeare.txt")
     lines = f.readlines();
     i = 0
@@ -57,4 +59,14 @@ def process_shakespeare():
                         X.append(wordlookup[word])
             i = i + 1
         X.append(x)
-    return X
+    return (X, wordlookup)
+
+
+wordlist, syllable_count, wordlookup = get_token_dict()
+print("WORDLIST")
+print(wordlist)
+print("SYLLABLE_COUNT")
+print(syllable_count)
+print("WORDLOOKUP")
+print(wordlookup)
+print(process_shakespeare())

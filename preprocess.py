@@ -1,9 +1,5 @@
 import re
 import numpy as np
-import keras
-from keras.utils import to_categorical
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Embedding, LSTM, Dropout
 
 def get_token_dict():
     print("getting token")

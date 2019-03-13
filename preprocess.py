@@ -75,19 +75,18 @@ def process_shakespeare():
     return (X, wordlookup)
 
 def get_data():
-    X, word_to_id = process_shakespeare()
-    X_train = []
-    X_test = []
-    for i in range(len(X)):
-        x = X[i]
-        # arbitrarily split data set into training and set
-        if i < 130:
-            for word in x:
-                X_train.append(word)
-        if i >= 130:
-            for word in x:
-                X_test.append(word)
-    vocab = len(word_to_id)
-    reversed_dictionary = dict(zip(word_to_id.values(), word_to_id.keys()))
-    return X_train, X_test, vocab, reversed_dictionary
-
+    f = open('data/shakespeare.txt')
+    lines = f.readlines()
+    text = ""
+    for line in lines:
+        try:
+            int(line)
+        except ValueError:
+            text = text + line
+    print("Text length %d" % len(text))
+    v = sorted(set(text))
+    print("Number of Unique Characters %d" % len(v))
+    char2id = {u:i for i, u in enumerate(v)}
+    id2char = np.array(v)
+    text_as_int = np.array([char2id[c] for c in text])
+    return text_as_int, text, v, char2id, id2char

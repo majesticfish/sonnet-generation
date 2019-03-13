@@ -120,14 +120,53 @@ def obs_map_reverser(obs_map):
 def sample_sentence(hmm, obs_map, n_words=100):
     # Get reverse map.
     obs_map_r = obs_map_reverser(obs_map)
-
+    
     # Sample and convert sentence.
     emission, states = hmm.generate_emission(n_words)
     sentence = [obs_map_r[i] for i in emission]
+    
+    # One string sentence 
+    sentence = ' '.join(sentence).capitalize() 
+    return sentence
 
-    return ' '.join(sentence).capitalize() + '...'
 
+def generate_poem(hmm, obs_map, syllable_dict, num_lines, num_syllables):
+    obs_map_r = obs_map_reverser(obs_map)
+    start_state = np.random.choice(hmm.L)
+    poem = []
 
+    for line in range(num_lines):
+        if (line % 4 == 0):
+            poem.append('\n')
+            
+        # Keep track of syllables in line
+        syllables = 0
+        
+        while syllables < num_syllables:   
+            # sample state from y_next that maximizes A[y][y_next]
+            state = np.random.choice(hmm.L, p=hmm.A[start_state])
+
+            # sample word from observation matrix
+            word = obs_map_r[np.random.choice(hmm.D, p=hmm.O[state])]
+            word_syllables = syllable_dict[word]
+            
+            # Check if we have too many syllables
+            if syllables + word_syllables > num_syllables:
+                continue
+                
+            else:
+                syllables += word_syllables
+                poem.append(word)
+                
+                # If we're done, we'll add a new line and start again
+                if syllables == num_syllables:
+                    poem.append('\n')
+                    start_state = state   
+                    break
+    # One string poem 
+    poem = ' '.join(poem).capitalize() 
+    return poem    
+    
 ####################
 # HMM VISUALIZATION FUNCTIONS
 ####################

@@ -99,6 +99,7 @@ def train_shakespeare(batch_size, n_epochs):
                                   batch_input_shape=[batch_size, None]),
         tf.keras.layers.LSTM(embedding_dim, return_sequences=True),
         tf.keras.layers.Dense(vocab_size),
+        tf.keras.layers.Activation("softmax")
       ])
       return model
     model = build_model(
@@ -144,6 +145,7 @@ def grab_model(filename):
                                       batch_input_shape=[batch_size, None]),
             tf.keras.layers.LSTM(embedding_dim, return_sequences=True),
             tf.keras.layers.Dense(vocab_size),
+            tf.keras.layers.Activation("softmax")
         ])
         return model
     # The embedding dimension

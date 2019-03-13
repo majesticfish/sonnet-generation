@@ -10,8 +10,14 @@ def get_token_dict():
     for line in lines:
         l_split = line.split(" ")
         l = len(l_split)
+        
+        # create dictionary to map words to token number
+        wordlookup[l_split[0].lower()] = len(wordlist)
+        
+        # map token number to word
         wordlist.append(l_split[0].lower())
-        wordlookup[l_split[0].lower()] = len(wordlist) - 1
+        
+        # grab all syllables
         syllable_count.append(l_split[1:])
     return (wordlist, syllable_count, wordlookup)
 
@@ -44,6 +50,8 @@ def process_shakespeare():
             line = line.replace('!','')
             line = line.replace(';','')
             line = line.replace(':','')
+            line = line.replace('(','')
+            line = line.replace(')','')
             line = line.strip('\n')
 
             words = line.split(' ')

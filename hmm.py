@@ -83,55 +83,6 @@ class HiddenMarkovModel:
         self.A_start = [1. / self.L for _ in range(self.L)]
 
 
-    def viterbi(self, x):
-        '''
-        Uses the Viterbi algorithm to find the max probability state 
-        sequence corresponding to a given input sequence.
-
-        Arguments:
-            x:          Input sequence in the form of a list of length M,
-                        consisting of integers ranging from 0 to D - 1.
-
-        Returns:
-            max_seq:    State sequence corresponding to x with the highest
-                        probability.
-        '''
-
-        M = len(x)      # Length of sequence.
-
-        # The (i, j)^th elements of probs and seqs are 
-        # the max probability of the prefix of length i ending in state j 
-        # and the prefix that gives this probability, respectively.
-        #
-        # For instance, probs[1][0] is the probability of the prefix of
-        # length 1 ending in state 0.
-        probs = [[0. for _ in range(self.L)] for _ in range(M + 1)]
-        seqs = [['' for _ in range(self.L)] for _ in range(M + 1)]
-
-        ###
-        # Initialize the probabilities 
-        for s in range(self.L):
-            probs[1][s] = self.A_start[s] * self.O[s][x[0]]
-            seqs[1][s] = str(s)     
-            
-        # Every time step except first one
-        for m in range(2, M + 1):
-            
-            # Every state
-            for s in range(self.L):
-                
-                # Find maximum probability value
-                probs[m][s] = np.max([(probs[m-1][sp]) * (self.A[sp][s]) * (self.O[s][x[m-1]]) 
-                                      for sp in range(self.L)])
-                
-                # Find argmax
-                seqs[m][s] = seqs[m-1][np.argmax([probs[m-1][sp] * self.A[sp][s] * (self.O[s][x[m-1]]) 
-                                        for sp in range(self.L)])] + str(s)
-         
-        max_seq = seqs[M][np.argmax([probs[M][sp] for sp in range(self.L)])]
-        return max_seq
-
-
     def forward(self, x, normalize=False):
         '''
         Uses the forward algorithm to calculate the alpha probability
@@ -169,11 +120,13 @@ class HiddenMarkovModel:
             c[1] += alphas[1][s]
         
         # Fill the matrix
-        for m in range(2, M + 1):
+        for m in range(2, M+1): 
             for i in range(self.L):
                 for j in range(self.L):
                     alphas[m][i] += alphas[m-1][j] * self.A[j][i]
-                alphas[m][i] *= self.O[i][x[m-1]]
+            #    print("index:", i)
+                dumb = self.O[i][x[m-1]]
+                # alphas[m][i] *= self.O[i][x[m-1]]
                 c[m] += alphas[m][i]
             if c[m] > 0:
                 c[m] = 1 / c[m]            
@@ -289,7 +242,7 @@ class HiddenMarkovModel:
                     for a in range(L):
                         for b in range(L):
                             P2[j][i][a][b] = alphas[j][i+1][a] * self.A[a][b] * \
-                                             self.O[b][X[j][i+1]] * betas[j][i+2][b]
+                                             self.O[b][X[j][i+1]] * betas[j][i+2][b] 
                             denom += P2[j][i][a][b]
                     if denom > 0:
                         P2[j][i] = P2[j][i] / denom
@@ -326,7 +279,7 @@ class HiddenMarkovModel:
                             if X[j][i] == w:
                                 numer += P1[j][i][z]
                     if denom > 0:
-                        self.O[z][w] = numer / denom
+                        self.O[z][w] = numer / denom 
                   
 
     def generate_emission(self, M):
@@ -429,23 +382,14 @@ def unsupervised_HMM(X, n_states, N_iters):
     '''
 
     # Make a set of observations.
-    print("CHECKING X")
-    print(len(X))
-    print(X[0])
-    observations = []
- #   for x in X:
-   #     observations |= set(x)
-    for i in range(len(X)):
-        print("PRINTING X[" + str(i) + "]")
-        print(X[i])
-
-    observations = set(observations)
-  #  observations = set([item for sublist in X for item in sublist])
-    
+    observations = set()
+    for x in X:
+        observations |= set(x)
     
     # Compute L and D.
     L = n_states
     D = len(observations)
+    print("LEN OBSERVATIONS:", D)
 
     # Randomly initialize and normalize matrix A.
     A = [[random.random() for i in range(L)] for j in range(L)]

@@ -1,9 +1,5 @@
 import re
 import numpy as np
-import keras
-from keras.utils import to_categorical
-from keras.models import Sequential
-from keras.layers import Dense, Activation, Embedding, LSTM, Dropout
 
 def get_token_dict():
     print("getting token")
@@ -72,7 +68,35 @@ def process_shakespeare():
                         x.append(wordlookup[word])
             i = i + 1
         X.append(x)
+
     return (X, wordlookup)
+
+def syllable_lookup():
+    '''Helper to create a dictionary with key: word, value: syllables (int)'''
+    wordlist, syllable_count, wordlookup = get_token_dict()
+    syllable_dict = {}
+
+    # syllable_count is a list of lists
+    for i in range(len(wordlist)):
+        if syllable_count[i][0][0] == 'E':
+            syllable_dict[wordlist[i]] = int(syllable_count[i][1][0])
+        else:
+            syllable_dict[wordlist[i]] = int(syllable_count[i][0][0])
+
+    return syllable_dict
+
+
+
+wordlist, syllable_count, wordlookup = get_token_dict()
+'''
+print("WORDLIST")
+print(wordlist)
+print("SYLLABLE_COUNT")
+print(syllable_count)
+print("WORDLOOKUP")
+print(wordlookup)
+print(process_shakespeare())'''
+print(syllable_lookup())
 
 def get_data():
     f = open('data/shakespeare.txt')

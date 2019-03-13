@@ -1,4 +1,9 @@
 import re
+import numpy as np
+import keras
+from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Embedding, LSTM, Dropout
 
 def get_token_dict():
     print("getting token")
@@ -10,13 +15,13 @@ def get_token_dict():
     for line in lines:
         l_split = line.split(" ")
         l = len(l_split)
-        
+
         # create dictionary to map words to token number
         wordlookup[l_split[0].lower()] = len(wordlist)
-        
+
         # map token number to word
         wordlist.append(l_split[0].lower())
-        
+
         # grab all syllables
         syllable_count.append(l_split[1:])
     return (wordlist, syllable_count, wordlookup)
@@ -96,3 +101,20 @@ print("WORDLOOKUP")
 print(wordlookup)
 print(process_shakespeare())'''
 print(syllable_lookup())
+
+def get_data():
+    X, word_to_id = process_shakespeare()
+    X_train = []
+    X_test = []
+    for i in range(len(X)):
+        x = X[i]
+        # arbitrarily split data set into training and set
+        if i < 130:
+            for word in x:
+                X_train.append(word)
+        if i >= 130:
+            for word in x:
+                X_test.append(word)
+    vocab = len(word_to_id)
+    reversed_dictionary = dict(zip(word_to_id.values(), word_to_id.keys()))
+    return X_train, X_test, vocab, reversed_dictionary

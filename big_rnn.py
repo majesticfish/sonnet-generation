@@ -1,5 +1,6 @@
 # Small LSTM Network to Generate Text for Alice in Wonderland
 import numpy
+import sys
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -9,8 +10,17 @@ from keras.utils import np_utils
 
 print("STARTING!")
 # load ascii text and covert to lowercase
-filename = "C:\\Users\\Laura\\Documents\\CS155\\sonnet-generation\\data\\shakespeare.txt"
-raw_text = open(filename).read()
+filename = "data/shakespeare.txt"
+f = open(filename)
+lines = f.readlines()
+raw_text = ""
+for line in lines:
+    if lines == '\n':
+        continue
+    try:
+        int(lines)
+    except ValueError:
+        raw_text = raw_text + line
 raw_text = raw_text.lower()
 
 # create mapping of unique chars to
@@ -57,4 +67,4 @@ checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only
 callbacks_list = [checkpoint]
 
 # fit the model
-model.fit(X, y, epochs=100, batch_size=50, callbacks=callbacks_list)
+model.fit(X, y, epochs=101, batch_size=50, callbacks=callbacks_list)

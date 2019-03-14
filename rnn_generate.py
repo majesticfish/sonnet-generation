@@ -9,7 +9,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 
 # load ascii text and covert to lowercase
-filename = "C:\\Users\\Laura\\Documents\\CS155\\sonnet-generation\\data\\shakespeare.txt"
+filename = "data/shakespeare.txt"
 raw_text = open(filename).read()
 raw_text = raw_text.lower()
 
@@ -52,7 +52,7 @@ model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 
 # load the network weights
-filename = "2-weights-improvement-12-2.1536.hdf5"
+filename = sys.argv[1]
 model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 

@@ -96,7 +96,6 @@ print(syllable_count)
 print("WORDLOOKUP")
 print(wordlookup)
 print(process_shakespeare())'''
-print(syllable_lookup())
 
 def get_data():
     f = open('data/shakespeare.txt')

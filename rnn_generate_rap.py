@@ -1,7 +1,7 @@
 # Load LSTM network and generate text
 import sys
 import numpy as np
-from random import random
+import preprocess
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -9,14 +9,8 @@ from keras.layers import LSTM
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 
-def usage():
-    print("python rnn_generate.py weights_file temp")
-
-if len(sys.argv) != 3:
-    usage()
-    sys.exit()
 # load ascii text and covert to lowercase
-filename = "data/shakespeare.txt"
+filename = "data/rap.txt"
 f = open(filename)
 lines = f.readlines()
 raw_text = ""
@@ -73,7 +67,7 @@ model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 # seed
-text_seed = "shall i compare thee to a summer's day?\n"
+text_seed = "with monica lewinsky feeling on his nut-"
 pattern = [char_to_int[char] for char in text_seed]
 print("PATTERN:", pattern)
 testing = "".join([int_to_char[value] for value in pattern])
@@ -81,34 +75,12 @@ print("THE REVERSE", testing)
 
 poem = ""
 
-temp = float(sys.argv[2])
-
-def sample(prediction_dist, temp):
-    '''Applies temperature to a softmax output. Returns a sample from the
-    prediction distribution with temperature
-
-    Parameters:
-        prediction_dist: a 1 X N array of predictions
-        temp: a float describing the temperature
-    '''
-
-    prediction = np.log(prediction_dist) / temp
-    prediction = np.exp(prediction[0])
-    prediction = prediction/np.sum(prediction)
-    r = random()
-    pred = 0
-    while r > 0:
-        r = r - prediction[pred]
-        pred = pred + 1
-    return pred - 1
-
 for i in range(40*14):
     x = np.reshape(pattern,(1,len(pattern), 1))
     x = x / float(n_vocab)
 
-    prediction_dist = model.predict(x, verbose=0)
-    pred_index = sample(prediction_dist, temp)
-
+    pred_index = np.argmax(model.predict(x, verbose=0))
+    seq = [int_to_char[value] for value in pattern]
     poem += int_to_char[pred_index]
 
     pattern.append(pred_index)

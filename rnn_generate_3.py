@@ -16,7 +16,7 @@ if len(sys.argv) != 3:
     usage()
     sys.exit()
 # load ascii text and covert to lowercase
-filename = "data/shakespeare.txt"
+filename = "data/shakespeare + rap.txt"
 f = open(filename)
 lines = f.readlines()
 raw_text = ""
@@ -63,7 +63,11 @@ y = np_utils.to_categorical(dataY)
 
 # define the LSTM model
 model = Sequential()
-model.add(LSTM(500, input_shape=(X.shape[1], X.shape[2])))
+model.add(LSTM(500, input_shape=(X.shape[1], X.shape[2]), return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(500, return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(500))
 model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 

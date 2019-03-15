@@ -149,6 +149,7 @@ def generate_poem(hmm, obs_map, syllable_dict, num_lines, num_syllables):
             # sample word from observation matrix
             word = obs_map_r[np.random.choice(hmm.D, p=hmm.O[state])]
             word_syllables = syllable_dict[word]
+
             
             # Check if we have too many syllables
             if syllables + word_syllables > num_syllables:
